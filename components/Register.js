@@ -1,33 +1,35 @@
+// Register.js
+// Renders form component with username, password, pass confirmation, and input validation
+// Toggle show password, return to home screen, submit registration, clear buttons
+
+// TODO: SUBMIT TO DATABASE
+// TODO: STYLING
+
 "use client";
 import { useState } from "react";
 import Link from "next/link";
 
-// register page
-
-/*
-    user
-    pass
-
-    input validation
-    user pass lenght req
-    toggle pass visiblity
-    null check
-    clear buton
-    error message tag
-
-*/
 export default function Register() {
     const [user, setUser] = useState("");
     const [pass, setPass] = useState("");
     const [confirmPass, setConfirmPass] = useState("");
+    // Stores error messages 
     const [errors, setErrors] = useState({
         passMatch: '',
         passLength: '',
         userLength: '',
         // userTaken: ''
     })
+    // Toggles pass visibility 
     const [showPass, setShowPass] = useState(false);
 
+    /*
+    Handles input validation upon form submission. Checks...
+        - Username, password length
+        - Password, pass confirmation match
+        - Sets errors to new error object
+        - Confirms if valid from errors before submitting
+    */
     function onRegisterSubmit(e) {
         let validForm = true;
         e.preventDefault();
@@ -40,12 +42,12 @@ export default function Register() {
             newError.passMatch = "passwords do not match";
             validForm = false;
         }
-        if (user.length === 0 || user.length < 3) {
-            newError.userLength = "username must be 3-12 characters long";
+        if (user.length === 0 || user.length < 3 || user.length > 10) {
+            newError.userLength = "username must be 3-10 characters long";
             validForm = false;
         }
-        if (pass.length === 0 || pass.length < 8) {
-            newError.passLength = "password must be 8+ characters long";
+        if (pass.length === 0 || pass.length < 8 || pass.length > 32) {
+            newError.passLength = "password must be 8-32 characters long";
             validForm = false;
         }
         setErrors(newError);
@@ -56,6 +58,7 @@ export default function Register() {
         console.log("user: ", user, "\npass: ", pass);
     }
 
+    // Clears user, pass, pass confirm, and error messages
     function handleClear() {
         setUser("");
         setPass("");
@@ -66,6 +69,16 @@ export default function Register() {
             userLength: '',
         })
     }
+    // Checks if any values in input fields to enable clear button
+    const enableClear = (user.length > 0) || (pass.length > 0) || (confirmPass.length > 0);
+
+    // Checks if all input fields are valid to enable submit button
+    const enableSubmit = (pass === confirmPass) && 
+    (pass.length >= 8 && pass.length <= 32) && 
+    (user.length >= 3 && user.length <= 10);
+
+    // Checks if any values in pass fields to enable show/hide toggle
+    const enableShowHide = (pass.length > 0) || (confirmPass.length > 0);
 
     return (
         <div>
@@ -74,25 +87,27 @@ export default function Register() {
                 <input type="text" placeholder="username" aria-label="Username" value={user}
                     onChange={(e) => setUser(e.target.value)} />
                 <br />
-                {errors.userLength && <p>{errors.userLength}</p>}
+                {errors.userLength && <p style={{ color: 'red' }}>{errors.userLength}</p>}
 
                 <input type={showPass ? "text" : "password"} placeholder="password" value={pass}
                     onChange={(e) => setPass(e.target.value)} />
                 <br />
-                {errors.passLength && <p>{errors.passLength}</p>}
+                {errors.passLength && <p style={{ color: 'red' }}>{errors.passLength}</p>}
 
                 <input type={showPass ? "text" : "password"} placeholder="confirm password" value={confirmPass}
                     onChange={(e) => setConfirmPass(e.target.value)} />
                 <br />
-                {errors.passMatch && <p>{errors.passMatch}</p>}
+                {errors.passMatch && <p style={{ color: 'red' }}>{errors.passMatch}</p>}
 
-                <button onClick={() => setShowPass(!showPass)}>{!showPass ? 'show' : 'hide'}</button>
+                <button type="button" disabled={!enableShowHide} 
+                onClick={() => setShowPass(!showPass)}>{!showPass ? 'show' : 'hide'}</button>
                 <br />
-                <button type="submit">take me to my cat!</button>
-                <button type="button" onClick={handleClear}>clear</button>
-            </form>
-            <button><Link href="/">return</Link></button>
-        </div>
-    )
 
+                {/* disable buttons until valid*/}
+                <button type="submit" disabled={!enableSubmit}>take me to my cat!</button>
+                <button type="button" disabled={!enableClear} onClick={handleClear}>clear</button>
+            </form>
+            <Link href="/"><button type = "button">return...</button></Link>
+        </div>
+    ) 
 }
