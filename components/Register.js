@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 
 // register page
 
@@ -90,7 +91,7 @@ export default function Register() {
                 <button type="submit">take me to my cat!</button>
                 <button type="button" onClick={handleClear}>clear</button>
             </form>
-            <button>return...</button>
+            <button><Link href="/">return</Link></button>
         </div>
     )
 
