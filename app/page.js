@@ -11,9 +11,9 @@ export default function Home() {
   return (
     <div>
       <h1>welcome to TamaCatAI!</h1>
-      <button><Link href="/login">login</Link> </button>
+      <Link href="/login"><button type = "button">login</button></Link>
       <br />
-      <button><Link href="/register">register</Link> </button>
+      <Link href="/register"><button type = "button">sign up</button></Link>
       <br />
     </div>
   );

@@ -87,7 +87,9 @@ export default function Login() {
                 {errors.passLength && <p style={{ color: 'red' }}>{errors.passLength}</p>}
 
                 {/* disable buttons until valid*/}
-                <button type="submit" disabled={!enableSubmit}>take me to my cat!</button>
+                <Link href="/dashboard">
+                    <button type="submit" disabled={!enableSubmit}>take me to my cat!</button>
+                </Link>
                 <button type="button" disabled={!enableClear} onClick={handleClear}>clear</button>
             </form>
             <Link href="/"><button type = "button">return...</button></Link>
