@@ -4,12 +4,16 @@
 
 // TODO: SUBMIT TO DATABASE
 // TODO: STYLING
+// TODO: DISPLAY ERRORS UNTIL CRITERIA MET IN ADDITOIN TO BUTTON DISABLE
 
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function Register() {
+    const router = useRouter();
+
     const [user, setUser] = useState("");
     const [pass, setPass] = useState("");
     const [confirmPass, setConfirmPass] = useState("");
@@ -19,6 +23,10 @@ export default function Register() {
         passLength: '',
         userLength: '',
         // userTaken: ''
+    })
+    const [focus, setFocus] = useState( {
+        user: false,
+        pass: false,
     })
 
     // Toggles pass visibility 
@@ -55,8 +63,9 @@ export default function Register() {
         if (!validForm) {
             return;
         }
-        // otherwise if no errors, submit info
+        // otherwise if no errors, submit info, route to onboarding
         console.log("user: ", user, "\npass: ", pass);
+        router.push("/onboarding");
     }
 
     // Clears user, pass, pass confirm, and error messages
@@ -73,11 +82,6 @@ export default function Register() {
     // Checks if any values in input fields to enable clear button
     const enableClear = (user.length > 0) || (pass.length > 0) || (confirmPass.length > 0);
 
-    // Checks if all input fields are valid to enable submit button
-    const enableSubmit = (pass === confirmPass) && 
-    (pass.length >= 8 && pass.length <= 32) && 
-    (user.length >= 3 && user.length <= 10);
-
     // Checks if any values in pass fields to enable show/hide toggle
     const enableShowHide = (pass.length > 0) || (confirmPass.length > 0);
 
@@ -89,7 +93,7 @@ export default function Register() {
                     onChange={(e) => setUser(e.target.value)} />
                 <br />
                 {errors.userLength && <p style={{ color: 'red' }}>{errors.userLength}</p>}
-
+                
                 <input type={showPass ? "text" : "password"} placeholder="password" value={pass}
                     onChange={(e) => setPass(e.target.value)} />
                 <br />
@@ -100,15 +104,14 @@ export default function Register() {
                 <br />
                 {errors.passMatch && <p style={{ color: 'red' }}>{errors.passMatch}</p>}
 
-                <button type="button" disabled={!enableShowHide} 
-                onClick={() => setShowPass(!showPass)}>{!showPass ? 'show' : 'hide'}</button>
+                <button type="button" disabled={!enableShowHide}
+                    onClick={() => setShowPass(!showPass)}>{!showPass ? 'show' : 'hide'}</button>
                 <br />
 
-                {/* disable buttons until valid*/}
-                <button type="submit" disabled={!enableSubmit}>meet my cat!</button>
+                <button type="submit">meet my cat!</button>
                 <button type="button" disabled={!enableClear} onClick={handleClear}>clear</button>
             </form>
-            <Link href="/"><button type = "button">return...</button></Link>
+            <Link href="/"><button type="button">return...</button></Link>
         </div>
-    ) 
+    )
 }

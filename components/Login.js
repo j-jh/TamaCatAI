@@ -8,15 +8,16 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
+    const router = useRouter();
     const [user, setUser] = useState("");
     const [pass, setPass] = useState("");
     // Stores error messages 
     const [errors, setErrors] = useState({
         passLength: '',
         userLength: '',
-        // userTaken: ''
     })
 
     // Toggles pass visibility 
@@ -49,6 +50,8 @@ export default function Login() {
         }
         // otherwise if no errors, submit info
         console.log("user: ", user, "\npass: ", pass);
+        // route to dashboard
+        router.push("/dashboard");
     }
 
     // Clears user, pass, and error messages
@@ -62,10 +65,6 @@ export default function Login() {
     }
     // Checks if any values in input fields to enable clear button
     const enableClear = (user.length > 0) || (pass.length > 0);
-
-    // Checks if all input fields are valid to enable submit button
-    const enableSubmit =  (pass.length >= 8 && pass.length <= 32) && 
-    (user.length >= 3 && user.length <= 10);
 
     // Checks if any values in pass field to enable show/hide toggle
     const enableShowHide = (pass.length > 0);
@@ -86,10 +85,7 @@ export default function Login() {
                 <br />
                 {errors.passLength && <p style={{ color: 'red' }}>{errors.passLength}</p>}
 
-                {/* disable buttons until valid*/}
-                <Link href="/dashboard">
-                    <button type="submit" disabled={!enableSubmit}>take me to my cat!</button>
-                </Link>
+                <button type="submit">take me to my cat!</button>
                 <button type="button" disabled={!enableClear} onClick={handleClear}>clear</button>
             </form>
             <Link href="/"><button type = "button">return...</button></Link>
