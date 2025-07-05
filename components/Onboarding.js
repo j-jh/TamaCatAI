@@ -35,6 +35,10 @@ export default function Onboarding() {
             ...cat, name: name
         })
         setHasName(true);
+        setErrors({
+            nameLen: '',
+            nameSet: '',
+        });
     }
     
     // Checks name set before routing to dashboard
