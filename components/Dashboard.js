@@ -19,8 +19,8 @@ export default function Dashboard() {
             dashboard
             <br />
             <br />
-            <p>[ {cat.name} ] || [exp: __]</p>
-            <p>[hunger:_|| affection:_ || energy:_ ]</p>
+            <p>[ {cat.name} ] || [exp: {cat.exp}] [$ {cat.money}]</p>
+            <p>[hunger: {cat.hunger} || affection: {cat.affection} || energy: {cat.energy} ]</p>
             <h1> =========</h1>
             <h1>||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;||</h1>
             <h1>||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;||</h1>
