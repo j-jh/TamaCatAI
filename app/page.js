@@ -3,6 +3,7 @@ import Image from "next/image";
 import styles from "./page.module.css";
 import Register from "@/components/Register";
 import Link from "next/link";
+import { CatProvider } from "@/context/CatContext";
 
 // npm run dev
 
@@ -15,6 +16,8 @@ export default function Home() {
       <br />
       <Link href="/register"><button type = "button">sign up</button></Link>
       <br />
+      <Link href="/about">about</Link>
+      <Link href="/contact">contact</Link>
     </div>
   );
 }
