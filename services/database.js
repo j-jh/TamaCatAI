@@ -14,11 +14,12 @@ const pool = new Pool({
 async function testConnection() {
   try {
     const res = await pool.query('SELECT NOW()');
-    console.log('Connected:', res.rows);
+    console.log('Connected at:', res.rows);
   } catch (error) {
     console.error('DB ERROR:', error);
-  } finally {
-    await pool.end();
+  // } finally {
+  //   await pool.end();
+  // }
   }
 }
 
