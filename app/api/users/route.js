@@ -5,6 +5,13 @@
 //
 
 // route: /api/users
+
+/*
+    Table: users
+    ----------
+    id (integer) | username (char 12) | password (text)
+
+*/
 import pool from '@/services/database';
 
 /*
