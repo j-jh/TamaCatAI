@@ -31,7 +31,7 @@ export async function GET() {
     try {
         const getAll = await pool.query(`SELECT * FROM cats`);
         return Response.json(getAll.rows);
-        
+
     } catch (error) {
         return Response.json({
             error: "Failed to GET",
@@ -51,7 +51,7 @@ export async function GET() {
 */
 export async function DELETE(req) {
     try {
-        const { searchParams } = new URL(requestAnimationFrame.url);
+        const { searchParams } = new URL(req.url);
         const userid = searchParams.get('userid');
         const deleteCat = await pool.query('DELETE FROM cats WHERE userid=$1 RETURNING *', [userid]);
 
