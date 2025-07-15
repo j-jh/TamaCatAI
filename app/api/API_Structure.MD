@@ -19,10 +19,10 @@ TODO: Fix all API files to follow below format
 
     Purpose
 
-    Function parameter:
+    Function Parameter:
     - params
 
-    Query parameter:
+    Query Parameter:
     - params
 
     Response:
