@@ -2,6 +2,17 @@
 
 TODO: Fix all API files to follow below format
 
+/* Cat Properties:
+    cat object: {
+        name: "",
+        hunger: 0,
+        money: 0,
+        affection: 0,
+        energy: 0,
+        exp: 0
+    }
+*/
+
 ---
 /* 
     file.js
@@ -24,6 +35,16 @@ TODO: Fix all API files to follow below format
 
     Query Parameter:
     - params
+
+    JSON Request Body (all properties are optional):
+    - a: char to 10,
+    - b: int
+    
+    Example JSON body:
+        {
+            "a": 10,
+            "b": 10000
+        }
 
     Response:
     - 200 for success
