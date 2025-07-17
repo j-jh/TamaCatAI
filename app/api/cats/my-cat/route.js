@@ -85,34 +85,57 @@ export async function GET(req) {
     )
 */
 
+// TODO: INPUT VALIDATION INPUT VALIDATION
 export async function PATCH(req) {
     try {
         console.log("patch api. ")
         const { searchParams } = new URL(req.url);
         const userID = searchParams.get("userid");
-        // userID
-        const body = await req.json();
-        // JSON object
 
-        // Create SQL query based on number of object attributes
+        console.log(userID);
+
+        if (!userID) {
+            // return error invalid id
+        }
+
+        // Expected JSON object
+        const body = await req.json();
+
+        if (!body || Object.keys(body).length === 0) {
+            // return error no json body
+        }
+
+        // Parse JSON keys as columns
         const columns = Object.keys(body);
-        // For db columns to update
+        // Parse JSON values as values
         const values = Object.values(body);
-        // Values of columns to update
+
+        if (columns.includes(null) || values.includes(null)) {
+            // return null field
+        }
+
+        if (columns.length !== values.length) {
+            // return error mismatch 
+        }
+
+        // if column doesn't exist..
+
         
         console.log("col: ", columns);
         console.log("val: ", values);
 
-        // Join columns together with comma separation
+        // Join columns together with comma separation to build sql column list
+        // (column1, column2, column...)
         const joinColumns = columns.map((column, index) => 
             `${column} = $${index+1}`).join(", ");
         // col1 = val1, col2 = val2... 
         
         console.log("col + val: ", joinColumns);
 
-        // UPDATE table SET col = val, col2 = val WHERE identifier = id;
+        // Format: UPDATE table SET col = val, col2 = val WHERE identifier = id;
         const sqlQuery = `UPDATE cats SET ${joinColumns} WHERE userid = ${userID} RETURNING *`;
-        // Query to update cat from corresponding user ID
+        
+        // Send SQL query to db with values
         const updateCat = await pool.query(sqlQuery, values);
 
         return Response.json(updateCat.rows);
@@ -124,3 +147,4 @@ export async function PATCH(req) {
         })
     }
 }
+
