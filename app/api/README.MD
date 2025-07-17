@@ -47,14 +47,22 @@ TODO: Fix all API files to follow below format
         }
 
     Response:
-    - 200 for success
+    - 200 for success get
+    - 201 success post 
     - 400 for invalid input
+    - 401 unauthorized
+    - 404 not found
     - 500 for backend error 
 
     // Response.json(body, options);
     Response.json( 
-        { error: "message here"}, // response body object, data to send back
-        { status: int}  // options object with extra details (status, headers, text)
+        { 
+            success: boolean,
+            message: "message here", // response body object, data to send back
+        },
+        {
+            status: int  // options object with extra details (status, headers, text)
+        }
     )
 */
 // function code
