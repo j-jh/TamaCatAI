@@ -3,9 +3,9 @@
     =====
     Provides two reusable helper functions for returning formatted API JSON reponse
 
-    Contains
-    - Success response
-    - Error response
+    Contains:
+    - Success response function
+    - Error response function
 
     Usage:
         import { success, error } from "@/services/response";
