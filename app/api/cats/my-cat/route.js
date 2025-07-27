@@ -25,25 +25,44 @@
     
 */
 import pool from "@/services/database";
+import { apiSuccess, apiError } from "@/services/response";
 
 export async function GET(req) {
     try {
         console.log("get cat by ID")
         const { searchParams } = new URL(req.url);
         const userID = searchParams.get('userID');
-        console.log("id: ",userID);
+
+        if (!userID) {
+            return apiError(
+                "Missing parameter ID",
+                400
+            )
+        }
+
+        console.log("id: ", userID);
 
         const getCat = await pool.query(`SELECT * FROM cats WHERE userID = $1`, [userID]);
 
-        return Response.json(
-            getCat.rows
+        if (getCat.rows.length === 0) {
+            return apiError(
+                "Cat not found",
+                404
+            )
+        }
+
+        return apiSuccess(
+            "Successfully retrieved cat data",
+            getCat.rows,
+            200
         );
 
     } catch (error) {
-        return Response.json({
-            error: "Failed to GET cat by ID",
-            msg: error.message
-        })
+        console.log(error.message);
+        return apiError(
+            "Failed to call GET request",
+            500
+        );
     }
 }
 
@@ -95,7 +114,10 @@ export async function PATCH(req) {
         console.log(userID);
 
         if (!userID) {
-            // return error invalid id
+            return apiError(
+                "Missing parameter: ID",
+                400
+            )
         }
 
         // Expected JSON object
@@ -103,6 +125,10 @@ export async function PATCH(req) {
 
         if (!body || Object.keys(body).length === 0) {
             // return error no json body
+            return apiError(
+                "Missing parameter: JSON",
+                400
+            )
         }
 
         // Parse JSON keys as columns
@@ -112,39 +138,55 @@ export async function PATCH(req) {
 
         if (columns.includes(null) || values.includes(null)) {
             // return null field
+            return apiError(
+                "Missing parameter: null column(s) and/or value(s)",
+                400
+            )
         }
 
         if (columns.length !== values.length) {
             // return error mismatch 
+            return apiError(
+                "Columns and values count mismatch",
+                400
+            )
         }
 
-        // if column doesn't exist..
+        // if column doesn't exist..   
 
+        // if type mismatch for values?
         
+
         console.log("col: ", columns);
         console.log("val: ", values);
 
         // Join columns together with comma separation to build sql column list
         // (column1, column2, column...)
-        const joinColumns = columns.map((column, index) => 
-            `${column} = $${index+1}`).join(", ");
+        const joinColumns = columns.map((column, index) =>
+            `${column} = $${index + 1}`).join(", ");
         // col1 = val1, col2 = val2... 
-        
+
         console.log("col + val: ", joinColumns);
 
         // Format: UPDATE table SET col = val, col2 = val WHERE identifier = id;
+
+        // fix sql injection 
         const sqlQuery = `UPDATE cats SET ${joinColumns} WHERE userid = ${userID} RETURNING *`;
-        
+
         // Send SQL query to db with values
         const updateCat = await pool.query(sqlQuery, values);
 
-        return Response.json(updateCat.rows);
+        return apiSuccess(
+            "Successfully updated cat data",
+            updateCat.rows,
+            200
+        );
 
     } catch (error) {
-        return Response.json({
-            error: "Failed to PATCH cat info",
-            msg: error.message
-        })
+        return apiError(
+            "Failed to process PATCH request",
+            500
+        )
     }
 }
 
