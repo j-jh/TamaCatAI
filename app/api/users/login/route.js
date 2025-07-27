@@ -1,6 +1,7 @@
 // POST API to verify login credentials to user in "users" table
 // route: /api/users/login
 import pool from "@/services/database";
+import { apiSuccess, apiError } from "@/services/response";
 
 /*
     POST API endpoint
@@ -18,24 +19,44 @@ import pool from "@/services/database";
 export async function POST(req) {
     try {
         console.log("Logging in...")
-        const body = await req.json();
+        let body;
+        try {
+            body = await req.json();
+        } catch {
+            return apiError(
+                "Invalid JSON body",
+                400
+            )
+        };
+
         // Parses username, password from JSON body
         const { username, password } = body;
+        if (!username || !password) {
+            return apiError(
+                "JSON body missing username and/or password",
+                400
+            )
+        };
+
         // Query to db
         const login = await pool.query('SELECT * FROM users WHERE username = $1 AND password = $2', [username, password]);
 
         if (login.rows.length === 0) {
-            return Response.json(`No matching credentials for: ${username}`);
-        }
-        return Response.json({
-            message: `Success! Logged in as: ${username}`,
-            user: login.rows
-        });
+            return apiError(
+                "Invalid login credentials",
+                401
+            )
+        };
+        return apiSuccess(
+            "Login success",
+            login.rows,
+            200
+        );
 
     } catch (error) {
-        return Response.json({
-            error: "Failed to req login",
-            msg: error.message
-        })
+        return apiError(
+            "Failed to process POST request for LOGIN API",
+            500
+        )
     }
 }
