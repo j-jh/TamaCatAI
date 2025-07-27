@@ -1,3 +1,11 @@
+/* 
+    route.js
+    -----
+    Contains APIs for all cats management
+    - Get all cats
+    - Delete cat
+*/
+
 // route: /api/cats
 
 // TODO: cat API
@@ -19,6 +27,7 @@
 
 */
 import pool from "@/services/database";
+import { apiError, apiSuccess } from "@/services/response";
 
 /*
     GET API endpoint
@@ -29,14 +38,17 @@ import pool from "@/services/database";
 
 export async function GET() {
     try {
-        const getAll = await pool.query(`SELECT * FROM cats`);
-        return Response.json(getAll.rows);
-
+        const getAllCats = await pool.query(`SELECT * FROM cats`);
+        return apiSuccess(
+            "Successfully fetched all cat data",
+            getAllCats.rows,
+            200
+        );
     } catch (error) {
-        return Response.json({
-            error: "Failed to GET",
-            msg: error.message
-        })
+        return apiError(
+            "Failed to process GET request",
+            500
+        )
     }
 }
 /*
@@ -52,17 +64,25 @@ export async function GET() {
 export async function DELETE(req) {
     try {
         const { searchParams } = new URL(req.url);
-        const userid = searchParams.get('userid');
-        const deleteCat = await pool.query('DELETE FROM cats WHERE userid=$1 RETURNING *', [userid]);
+        const userID = searchParams.get('userid');
+        if (!userID) {
+            return apiError(
+                "Missing parameter: ID",
+                400
+            )
+        };
+        const deleteCat = await pool.query('DELETE FROM cats WHERE userid=$1 RETURNING *', [userID]);
 
-        return Response.json(
-            deleteCat.rows
+        return apiSuccess(
+            "Successfully deleted cat data",
+            deleteCat.rows,
+            200
         );
 
     } catch (error) {
-        return Response.json({
-            error: "Failed to DELETE cat",
-            msg: error.message
-        });
+        return apiError(
+            "Failed to process DELETE request",
+            500
+        );
     }
 }
