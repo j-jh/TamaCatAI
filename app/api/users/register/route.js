@@ -1,25 +1,61 @@
-// POST api to insert new user information to "users" table
-// route: /api/users/register
+/* 
+    route.js
+    =====
+    Contains functions for user registration
+    - Hash Password
+    - POST API to Register user
+*/
+
 import pool from "@/services/database";
 import { apiError, apiSuccess } from "@/services/response";
 
-/*
-    POST API endpoint
-    Parameter of HTTPS request object with expected JSON body
-    Queries post request with given username, password 
-    Returns with JSON of the new user info on success
-    Error if username already exists, or request fails
+const bcrypt = require('bcrypt');
 
-    Expected JSON body:
+/*
+    hashPassword
+
+    Hashes plain text password using bcrypt
+
+    Function Parameter:
+    - password as plain text
+
+    Returns:
+    - hashed password
+
+*/
+async function hashPassword(plainPass) {
+    const saltRounds = 10;
+    // 10 rounds of hashing
+    const hashedPass = await bcrypt.hash(plainPass, saltRounds);
+    // console.log(hashedPass);
+    return hashedPass;
+}
+
+/*
+    POST API
+    /api/users/register
+
+    Registers a new user into the database
+
+    Function Parameter:
+    - req: HTTP request object containing method, URL, query params, body 
+    
+    Expected JSON Request Body:
         {
-            "username": "",
-            "password": ""
+            "username": "string (max len 12)",
+            "password": "string"
         }
+
+    Behaviors:
+    - Validates the JSON body, username uniqueness
+    - Posts the username and encrypted password into the database 
+    - Returns a success message with the user info on success
+    - Returns an error if parameters, username uniqueness, API call fails
 */
 export async function POST(req) {
     try {
         console.log("posting...");
-        // Parses username, password contents from JSON object body
+
         let body;
         try {
             body = await req.json();
@@ -47,13 +83,15 @@ export async function POST(req) {
                 400
             )
         };
+        // Hash password
+        const hashedPassword = hashPassword(password);
+        // console.log(hashedPassword);
 
         // Query to submit to db
-        const register = await pool.query(`INSERT INTO users (username, password) VALUES ($1,$2) RETURNING *`,
-            [username, password]
+        const register = await pool.query(`INSERT INTO users (username, password) VALUES ($1,$2) RETURNING id, username`,
+            [username, hashedPassword]
         ); 
-        // To check if included in full users table
-        // const getAll = await pool.query(`SELECT * FROM users`);
+
         return apiSuccess(
             "Registration success",
             register.rows,
