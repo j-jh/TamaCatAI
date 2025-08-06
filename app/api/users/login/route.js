@@ -1,20 +1,35 @@
-// POST API to verify login credentials to user in "users" table
-// route: /api/users/login
+/* 
+    route.js: Login API
+    =====
+    Contains function for user login:
+    - Checks hashed password from database against plaintext password
+    - POST request to log in users
+*/
 import pool from "@/services/database";
 import { apiSuccess, apiError } from "@/services/response";
 
-/*
-    POST API endpoint
-    Parameter of HTTPS request object with expected JSON body
-    Queries post request with given username, password 
-    Returns with JSON object of matching user object upon success
-    Error if credentials mismatch, req fails
+const bcrypt = require('bcrypt');
 
-    Expected JSON body:
+/*
+    POST API
+    /api/users/login
+
+    Logs in a user if credentials match
+
+    Function Parameter:
+    - req: HTTP request object containing method, URL, query params, body 
+    
+    Expected JSON Request Body:
         {
-            "username": "",
-            "password": ""
+            "username": "string (max len 12)",
+            "password": "string"
         }
+
+    Behaviors:
+    - Validates the JSON body, username, password fields 
+    - Compares the plaintext password against the database's hashed password
+    - Returns a success message with the user info on success
+    - Returns an error if parameters, credentials, API call fails
 */
 export async function POST(req) {
     try {
@@ -38,18 +53,31 @@ export async function POST(req) {
             )
         };
 
-        // Query to db
-        const login = await pool.query('SELECT * FROM users WHERE username = $1 AND password = $2', [username, password]);
-
-        if (login.rows.length === 0) {
+        // Veryify if user exists
+        const queryUser = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
+        if (queryUser.rows.length === 0) {
             return apiError(
                 "Invalid login credentials",
                 401
             )
         };
+        const user = queryUser.rows[0];
+        // Compare plaintext password with encrypted password in db
+        const isValidPass = await bcrypt.compare(password, user.password);
+
+        if (!isValidPass) {
+            return apiError(
+                "Invalid login credentials",
+                401
+            )
+        };
+        
         return apiSuccess(
             "Login success",
-            login.rows,
+            {
+                id: user.id,
+                username: user.username
+            },
             200
         );
 
