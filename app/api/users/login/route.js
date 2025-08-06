@@ -6,15 +6,15 @@
     - POST request to log in users
 */
 import pool from "@/services/database";
-import { apiSuccess, apiError } from "@/services/response";
-
+import { apiSuccess, apiError } from "@/services/errorResponses";
+import { createToken } from "@/services/authentication";
 const bcrypt = require('bcrypt');
 
 /*
     POST API
     /api/users/login
 
-    Logs in a user if credentials match
+    Logs in a user if credentials match, then generates JSON Web Token for the session
 
     Function Parameter:
     - req: HTTP request object containing method, URL, query params, body 
@@ -28,7 +28,7 @@ const bcrypt = require('bcrypt');
     Behaviors:
     - Validates the JSON body, username, password fields 
     - Compares the plaintext password against the database's hashed password
-    - Returns a success message with the user info on success
+    - Creates a JWT and returns a success message with the user info and token on success
     - Returns an error if parameters, credentials, API call fails
 */
 export async function POST(req) {
@@ -71,12 +71,22 @@ export async function POST(req) {
                 401
             )
         };
+        // If credentials are valid, create JWT, return success message with data
+        const token = createToken(
+            {
+                id: user.id,
+                username: user.username
+            }
+        );
         
         return apiSuccess(
             "Login success",
             {
-                id: user.id,
-                username: user.username
+                token,
+                user : {
+                    id: user.id,
+                    username: user.username
+                }
             },
             200
         );
