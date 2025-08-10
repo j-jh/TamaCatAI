@@ -21,11 +21,14 @@
     Query Parameters:
     - userID: ID of the user whose cat info will be returned
 
-    Response:
+    Behaviors: 
+    - 
+    -
+    -
     
 */
 import pool from "@/services/database";
-import { apiSuccess, apiError } from "@/services/response";
+import { apiSuccess, apiError } from "@/services/errorResponses";
 
 export async function GET(req) {
     try {
@@ -60,7 +63,7 @@ export async function GET(req) {
     } catch (error) {
         console.log(error.message);
         return apiError(
-            "Failed to call GET request",
+            "Failed to call GET request "+error.message,
             500
         );
     }
@@ -92,16 +95,10 @@ export async function GET(req) {
             "money": 10000
         }
 
-    Response:
-    - 200 for success
-    - 400 for invalid input
-    - 500 for backend error 
-
-    // Response.json(body, options);
-    Response.json( 
-        { error: "message here"}, // response body object, data to send back
-        { status: int}  // options object with extra details (status, headers, text)
-    )
+    Behaviors: 
+    -
+    -
+    -
 */
 
 // TODO: INPUT VALIDATION INPUT VALIDATION
@@ -184,7 +181,7 @@ export async function PATCH(req) {
 
     } catch (error) {
         return apiError(
-            "Failed to process PATCH request",
+            "Failed to process PATCH request "+error.message,
             500
         )
     }

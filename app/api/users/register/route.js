@@ -1,13 +1,13 @@
 /* 
-    route.js
+    route.js: Register API
     =====
     Contains functions for user registration
-    - Hash Password
-    - POST API to Register user
+    - Hash password
+    - POST API to register user
 */
 
 import pool from "@/services/database";
-import { apiError, apiSuccess } from "@/services/response";
+import { apiError, apiSuccess } from "@/services/errorResponses";
 
 const bcrypt = require('bcrypt');
 
@@ -84,7 +84,7 @@ export async function POST(req) {
             )
         };
         // Hash password
-        const hashedPassword = hashPassword(password);
+        const hashedPassword = await hashPassword(password);
         // console.log(hashedPassword);
 
         // Query to submit to db
