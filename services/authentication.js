@@ -4,6 +4,7 @@
     Contains
     - createToken: to create JWT
     - checkToken: to verify JWT
+
 */
 
 import jwt from 'jsonwebtoken';
@@ -59,6 +60,38 @@ export function checkToken(token) {
         token,
         JWT_SECRET
     );
+}
+
+/*
+    verifyUser
+
+    Verifies user's JSON web token from their HTTP request header
+
+    Function Parameter:
+    - req: HTTP request object to extract Authorization Header from
+
+    Behaviors: 
+    - Verifies if the authorization header is present and starts with 'Bearer'
+    - Extracts token from authorization header
+    - Attempts to decode token with checkToken()
+    - Returns the decoded token payload on success
+    - Throws an error if invalid, missing, or expired
+*/
+export function verifyUser(req) {
+    const authHead = req.headers.get('authorization');
+    // Null or doesn't start with 'Bearer '
+    if (!authHead || !authHead.startsWith('Bearer ')) {
+        throw new Error("Missing or invalid token");
+    }
+    // Extract token from auth head. [0] is bearer, [1] is token
+    const token = authHead.split(' ')[1];
+
+    try {
+        const decoded = checkToken(token);
+        return decoded;
+    } catch {
+        throw new Error("Invalid or expired token");
+    }
 }
 
 
