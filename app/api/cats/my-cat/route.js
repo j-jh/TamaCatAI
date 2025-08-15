@@ -29,8 +29,7 @@
         - Missing, invalid, or expired JWT
         - Missing, invalid userID
         - Cat not found
-        - Server error
-    
+        - Backend/DB error
 */
 import pool from "@/services/database";
 import { apiSuccess, apiError } from "@/services/errorResponses";
@@ -94,6 +93,9 @@ export async function GET(req) {
     Function Parameter:
     - req: HTTP request object containing method, URL, query params, body 
 
+    Expected HTTP Header:
+    - Authorization: Bearer <JWT>
+
     Query Parameter:
     - userID: ID of the user whose cat info will be updated
 
@@ -112,12 +114,18 @@ export async function GET(req) {
         }
 
     Behaviors: 
-    -
-    -
-    -
+    - Verifies authorization header's extracted JWT with verifyUser()
+    - Validates userID field
+    - Updates specified cat data fields for the cat corresponding to userID
+    - Returns updated cat information on success
+    - Returns error if:
+        - Missing, invalid, or expired JWT
+        - Missing, invalid userID
+        - Missing, invalid JSON body
+        - Column, value mismatch or invalid
+        - Backend/DB error
 */
 
-// TODO: INPUT VALIDATION INPUT VALIDATION
 export async function PATCH(req) {
     try {
         let authUser;
