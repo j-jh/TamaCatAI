@@ -6,11 +6,8 @@
     - Update cat info
 */
 
-
-// TODO: get cat info, update cat info
-
 /*
-    Method: GET
+    GET API
     /api/cats/my-cat
 
     Gets information from cat associated with given user ID
@@ -18,20 +15,39 @@
     Function Parameters:
     - req: HTTP request object containing method, URL, query params, body 
 
+    Expected HTTP Header:
+    - Authorization: Bearer <JWT>
+
     Query Parameters:
     - userID: ID of the user whose cat info will be returned
 
     Behaviors: 
-    - 
-    -
-    -
+    - Verifies authorization header's extracted JWT with verifyUser()
+    - Validates userID field
+    - Returns cat data corresponding to userID on success
+    - Returns error if:
+        - Missing, invalid, or expired JWT
+        - Missing, invalid userID
+        - Cat not found
+        - Server error
     
 */
 import pool from "@/services/database";
 import { apiSuccess, apiError } from "@/services/errorResponses";
+import { verifyUser } from "@/services/authentication";
 
 export async function GET(req) {
     try {
+        let authUser;
+        try {
+            authUser = verifyUser(req);
+        } catch (error) {
+            return apiError(
+                error.message,
+                401
+            );
+        }
+
         console.log("get cat by ID")
         const { searchParams } = new URL(req.url);
         const userID = searchParams.get('userID');
@@ -63,7 +79,7 @@ export async function GET(req) {
     } catch (error) {
         console.log(error.message);
         return apiError(
-            "Failed to call GET request "+error.message,
+            "Failed to call GET request " + error.message,
             500
         );
     }
@@ -104,6 +120,15 @@ export async function GET(req) {
 // TODO: INPUT VALIDATION INPUT VALIDATION
 export async function PATCH(req) {
     try {
+        let authUser;
+        try {
+            authUser = verifyUser(req);
+        } catch (error) {
+            return apiError(
+                error.message,
+                401
+            );
+        }
         console.log("patch api. ")
         const { searchParams } = new URL(req.url);
         const userID = searchParams.get("userid");
@@ -152,7 +177,7 @@ export async function PATCH(req) {
         // if column doesn't exist..   
 
         // if type mismatch for values?
-        
+
 
         console.log("col: ", columns);
         console.log("val: ", values);
@@ -181,7 +206,7 @@ export async function PATCH(req) {
 
     } catch (error) {
         return apiError(
-            "Failed to process PATCH request "+error.message,
+            "Failed to process PATCH request " + error.message,
             500
         )
     }
