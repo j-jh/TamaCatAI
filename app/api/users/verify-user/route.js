@@ -1,7 +1,7 @@
 /* 
     route.js
     -----
-    Contains API endpoint to verify a user's JSON web token
+    Contains API endpoint to test verifyUser() function
 */
 
 import { verifyUser } from "@/services/authentication";

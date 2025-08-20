@@ -15,7 +15,7 @@
 
 */
 import pool from '@/services/database';
-import { apiError, apiSuccess } from '@/services/response';
+import { apiError, apiSuccess } from '@/services/errorResponses';
 
 /*
     GET

@@ -50,7 +50,11 @@ async function hashPassword(plainPass) {
     - Validates the JSON body, username uniqueness
     - Posts the username and encrypted password into the database 
     - Returns a success message with the user info on success
-    - Returns an error if parameters, username uniqueness, API call fails
+    - Returns an error if:
+        - Missing, invalid JSON body
+        - Missing username/password fields
+        - Username not unique
+        - Backend/DB error
 */
 export async function POST(req) {
     try {

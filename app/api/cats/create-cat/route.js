@@ -1,7 +1,7 @@
 // route: /api/cats/create-cat
 // Creates a cat for first time uers
 import pool from "@/services/database";
-import { apiError, apiSuccess } from "@/services/response";
+import { apiError, apiSuccess } from "@/services/errorResponses";
 
 // TODO: for this method call, pass in the user ID directly instead of finding it from request
 // temp keep as http req query for testing 

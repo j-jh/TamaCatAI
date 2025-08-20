@@ -29,7 +29,11 @@ const bcrypt = require('bcrypt');
     - Validates the JSON body, username, password fields 
     - Compares the plaintext password against the database's hashed password
     - Creates a JWT and returns a success message with the user info and token on success
-    - Returns an error if parameters, credentials, API call fails
+    - Returns an error if:
+        - Missing, invalid JSON body
+        - Missing username/password fields
+        - Invalid login credentials
+        - Backend/DB error
 */
 export async function POST(req) {
     try {

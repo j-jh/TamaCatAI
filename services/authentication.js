@@ -4,6 +4,7 @@
     Contains
     - createToken: to create JWT
     - checkToken: to verify JWT
+    - verifyUser: to verify user's JWT from HTTP req
 
 */
 
