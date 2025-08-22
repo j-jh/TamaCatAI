@@ -33,6 +33,34 @@ export default function Register() {
     const [showPass, setShowPass] = useState(false);
 
     /*
+
+
+    */
+    async function postUser() {
+        try {
+            const response = await fetch('/api/users/register', {
+                method: 'POST',
+                body: JSON.stringify(
+                    {
+                        username: user,
+                        password: pass,
+                    }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) {
+                // err
+                return
+            }
+
+            const data = await response.json();
+            console.log(data);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    /*
     Handles input validation upon form submission. Checks...
         - Username, password length
         - Password, pass confirmation match
@@ -63,6 +91,9 @@ export default function Register() {
         if (!validForm) {
             return;
         }
+        // test
+        postUser();
+
         // otherwise if no errors, submit info, route to onboarding
         console.log("user: ", user, "\npass: ", pass);
         router.push("/onboarding");
