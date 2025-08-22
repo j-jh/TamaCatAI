@@ -1,10 +1,33 @@
-// Register.js
-// Renders form component with username, password, pass confirmation, and input validation
-// Toggle show password, return to home screen, submit registration, clear buttons
+/*
+    Register.js
+    ----- 
+    Renders user registration form with username, password, pass confirmation, and buttons.
 
-// TODO: SUBMIT TO DATABASE
+    Props/State:
+    - user: string of current username input
+    - pass: string of current password input
+    - confirmPass: string of current password confirmation input
+    - errors: object with error messages for validation, API errors
+    - awaitAPI: boolean to store API call await status
+    - showPass: boolean to toggle pass visibility\
+    - focus ? 
+
+    Handlers and Behaviors:
+    - postUser()   
+        Sends post request to /api/users/register with username, password
+        Returns true on success, false if API error then updates error state
+    - onRegisterSubmit(e: event)
+        Handles form submission and input validation
+        Calls postUser
+        Sets error, awaitAPI state
+        Routes user to /onboarding on API success 
+    - handleClear()
+        Clears all input fields, error state
+
+    Additional Notes:
+    - 
+*/
 // TODO: STYLING
-// TODO: DISPLAY ERRORS UNTIL CRITERIA MET IN ADDITOIN TO BUTTON DISABLE
 
 "use client";
 import { useState } from "react";
@@ -17,25 +40,21 @@ export default function Register() {
     const [user, setUser] = useState("");
     const [pass, setPass] = useState("");
     const [confirmPass, setConfirmPass] = useState("");
-    // Stores error messages 
     const [errors, setErrors] = useState({
         passMatch: '',
         passLength: '',
         userLength: '',
-        // userTaken: ''
+        apiError: ''
     })
-    const [focus, setFocus] = useState( {
+    const [focus, setFocus] = useState({
         user: false,
         pass: false,
     })
-
-    // Toggles pass visibility 
+    const [awaitAPI, setAwaitAPI] = useState(false);
     const [showPass, setShowPass] = useState(false);
 
-    /*
-
-
-    */
+    // Sends post request to /api/users/register
+    // Returns boolean for success/failure
     async function postUser() {
         try {
             const response = await fetch('/api/users/register', {
@@ -49,25 +68,29 @@ export default function Register() {
                     'Content-Type': 'application/json'
                 }
             });
-            if (!response.ok) {
-                // err
-                return
-            }
-
             const data = await response.json();
+
+            if (!response.ok) {
+                setErrors(prev => ({
+                    ...prev,
+                    apiError: data.message
+                }));
+                return false;
+            }
             console.log(data);
+            return true;
         } catch (error) {
             console.log(error);
+            setErrors(prev => ({
+                ...prev,
+                apiError: error.message
+            }));
+            return false;
         }
     }
-    /*
-    Handles input validation upon form submission. Checks...
-        - Username, password length
-        - Password, pass confirmation match
-        - Sets errors to new error object
-        - Confirms if valid from errors before submitting
-    */
-    function onRegisterSubmit(e) {
+    
+    // Handles form submission and input validation
+    async function onRegisterSubmit(e) {
         let validForm = true;
         e.preventDefault();
         const newError = {
@@ -91,11 +114,14 @@ export default function Register() {
         if (!validForm) {
             return;
         }
-        // test
-        postUser();
-
-        // otherwise if no errors, submit info, route to onboarding
-        console.log("user: ", user, "\npass: ", pass);
+        setAwaitAPI(true);
+        // Wait 1 second
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        const successAPI = await postUser();
+        setAwaitAPI(false);
+        if (!successAPI) {
+            return;
+        }
         router.push("/onboarding");
     }
 
@@ -108,6 +134,7 @@ export default function Register() {
             passMatch: '',
             passLength: '',
             userLength: '',
+            apiError: '',
         })
     }
     // Checks if any values in input fields to enable clear button
@@ -124,7 +151,7 @@ export default function Register() {
                     onChange={(e) => setUser(e.target.value)} />
                 <br />
                 {errors.userLength && <p style={{ color: 'red' }}>{errors.userLength}</p>}
-                
+
                 <input type={showPass ? "text" : "password"} placeholder="password" value={pass}
                     onChange={(e) => setPass(e.target.value)} />
                 <br />
@@ -135,11 +162,14 @@ export default function Register() {
                 <br />
                 {errors.passMatch && <p style={{ color: 'red' }}>{errors.passMatch}</p>}
 
+                {errors.apiError && <p style={{ color: 'red' }}>{errors.apiError}</p>}
                 <button type="button" disabled={!enableShowHide}
                     onClick={() => setShowPass(!showPass)}>{!showPass ? 'show' : 'hide'}</button>
                 <br />
 
-                <button type="submit">meet my cat!</button>
+                <button type="submit" disabled={awaitAPI}>
+                    {awaitAPI ? "prepping cat..." : "meet my cat!"}
+                </button>
                 <button type="button" disabled={!enableClear} onClick={handleClear}>clear</button>
             </form>
             <Link href="/"><button type="button">return...</button></Link>
