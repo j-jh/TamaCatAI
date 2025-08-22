@@ -1,10 +1,32 @@
-// Login.js
-// Renders form component with username, password, and input validation
-// Toggle show password, return to home screen, submit login, clear buttons
+/*
+    Login.js
+    ----- 
+    Renders user login form with username, password, and buttons.
 
-// TODO: SUBMIT TO DATABASE
+    Props/State:
+    - user: string of current username input
+    - pass: string of current password input
+    - errors: object with error messages for validation, API errors
+    - awaitAPI: boolean to store API call await status
+    - showPass: boolean to toggle pass visibility
+
+    Handlers and Behaviors:
+    - loginUser()   
+        Sends post request to /api/users/login with username, password
+        Returns true on success, false if API error then updates error state
+    - onLoginSubmit(e: event)
+        Handles form submission and input validation
+        Calls loginUser()
+        Sets error, awaitAPI state
+        Routes user to /dashboard on API success 
+    - handleClear()
+        Clears all input fields, error state
+
+    Additional Notes:
+    - 
+*/
+
 // TODO: STYLING
-
 "use client";
 import { useState } from "react";
 import Link from "next/link";
@@ -14,22 +36,54 @@ export default function Login() {
     const router = useRouter();
     const [user, setUser] = useState("");
     const [pass, setPass] = useState("");
-    // Stores error messages 
     const [errors, setErrors] = useState({
         passLength: '',
         userLength: '',
+        apiError: '',
     })
-
-    // Toggles pass visibility 
     const [showPass, setShowPass] = useState(false);
+    const [awaitAPI, setAwaitAPI] = useState(false);
 
-    /*
-    Handles input validation upon form submission. Checks...
-        - Username, password length
-        - Sets errors to new error object
-        - Confirms if valid from errors before submitting
-    */
-    function onLoginSubmit(e) {
+    // Sends post request to /api/users/login
+    // Returns boolean for success/failure
+    async function loginUser() {
+        try {
+            const response = await fetch('/api/users/login', {
+                method: 'POST',
+                body: JSON.stringify(
+                    {
+                        username: user,
+                        password: pass,
+                    }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data = await response.json();
+            console.log(data);
+            if (!response.ok) {
+                setErrors(prev => (
+                    {
+                        ...prev,
+                        apiError: data.message
+                    }
+                ));
+                return false;
+            }
+            return true;
+        } catch (error) {
+            console.log("api err");
+            setErrors(prev => (
+                {
+                    ...prev,
+                    apiError: error.message
+                }));
+            return false;
+        }
+    }
+
+    // Handles form submission and input validation
+    async function onLoginSubmit(e) {
         let validForm = true;
         e.preventDefault();
         const newError = {
@@ -48,8 +102,14 @@ export default function Login() {
         if (!validForm) {
             return;
         }
-        // otherwise if no errors, submit info
-        console.log("user: ", user, "\npass: ", pass);
+        setAwaitAPI(true);
+        // Wait 2 seconds
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        const successAPI = await loginUser();
+        setAwaitAPI(false);
+        if (!successAPI) {
+            return;
+        }
         // route to dashboard
         router.push("/dashboard");
     }
@@ -80,15 +140,18 @@ export default function Login() {
 
                 <input type={showPass ? "text" : "password"} placeholder="password" value={pass}
                     onChange={(e) => setPass(e.target.value)} />
-                <button type="button" disabled={!enableShowHide} 
+                <button type="button" disabled={!enableShowHide}
                     onClick={() => setShowPass(!showPass)}>{!showPass ? 'show' : 'hide'}</button>
                 <br />
                 {errors.passLength && <p style={{ color: 'red' }}>{errors.passLength}</p>}
+                {errors.apiError && <p style={{ color: 'red' }}>{errors.apiError}</p>}
 
-                <button type="submit">take me to my cat!</button>
+                <button type="submit" disabled={awaitAPI}>
+                    {awaitAPI? "waking up cat..." :  "take me to my cat!"}
+                </button>
                 <button type="button" disabled={!enableClear} onClick={handleClear}>clear</button>
             </form>
-            <Link href="/"><button type = "button">return...</button></Link>
+            <Link href="/"><button type="button">return...</button></Link>
         </div>
     )
 }
