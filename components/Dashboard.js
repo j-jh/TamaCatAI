@@ -1,17 +1,36 @@
 // Dashboard.js
 "use client";
-import Link from "next/link"
 import { useState } from "react"
 import { useCat } from "@/context/CatContext";
+import { useRouter } from "next/navigation";
+
+// TODO: Functions that update cat state
+// Add log out confirmation
+// Fetch cat state from db
+
+// Feed
+// Sleep.. etc
 
 export default function Dashboard() {
-
+    const router = useRouter();
     const [chat, setChat] = useState("");
     const { cat, setCat } = useCat();
+    const [awaitAPI, setAwaitAPI] = useState(false);
 
-    function handleSend() {
+    async function handleSend() {
         console.log(chat);
+        setAwaitAPI(true);
+        // Wait 
+        await new Promise(resolve => setTimeout(resolve, 1000));
         setChat("");
+        setAwaitAPI(false);
+    }
+
+    async function handleLogOut() {
+        setAwaitAPI(true);
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        setAwaitAPI(false);
+        router.push("/login")
     }
 
     return (
@@ -28,8 +47,11 @@ export default function Dashboard() {
             <h1>||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;||</h1>
             <h1> =========</h1>
             <textarea placeholder="chat with cat"
-                onChange={(e) => setChat(e.target.value)}></textarea>
-            <button onClick={handleSend}>send</button>
+                onChange={(e) => setChat(e.target.value)}
+                value={chat}></textarea>
+            <button onClick={handleSend} disabled={awaitAPI || !chat}>
+                {awaitAPI ? "sending..." : "send"}
+            </button>
             <br />
             <br />
             <button>button1</button>
@@ -37,7 +59,9 @@ export default function Dashboard() {
             <button>button3</button>
             <br />
             <br />
-            <Link href="/"><button type="button">log out...</button></Link>
+            <button onClick={handleLogOut} disabled={awaitAPI}>
+                {!awaitAPI ? "log out" : "logging out..."}
+            </button>
         </div>
     )
 }
