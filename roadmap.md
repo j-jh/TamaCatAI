@@ -1,28 +1,30 @@
 Completed:
-- Static front end
-- API requests for general features
-    - Login and registration
-    - Create, modify, get cat state
-- Hash password upon registration with bcrypt
-- Check pass against hashed password upon login
-- Create JWT upon sign in
-- Verify JWT prior to cat API calls
+    - Static front end
+    - API requests for general features
+        - Login and registration
+        - Create, modify, get cat state
+    - Hash password upon registration with bcrypt
+    - Check pass against hashed password upon login
+    - Create JWT upon sign in
+    - Verify JWT prior to cat API calls
+
+In progress:
+    - Update existing API comments and error codes
+    - Fetch backend API through front end
 
 Near goals:
-- Update existing API comments and error codes
-- Fetch backend API through front end
-- Create basic interactions to update cat state stats
-- cat UI?
-- Add OpenAi API calls
+    - Create basic interactions to update cat state stats
+    - cat UI?
+    - Add OpenAi API calls
 
 Future:
-- pg vector integration
-- Simple memory loop
-    - user text -> embed -> store -> query -> feed to prompt -> respond
+    - pg vector integration
+    - Simple (AI context) memory loop
+        - user text -> embed -> store -> query -> feed to prompt -> respond
 
 Ultimate:
-- Dynamic cat memory system (vector similarity search)
-    - allow context awareness, evolving confersations with the user over time
+    - Dynamic cat memory system (vector similarity search)
+        - allow context awareness, evolving confersations with the user over time
 
 
 Lessons learned so far:
