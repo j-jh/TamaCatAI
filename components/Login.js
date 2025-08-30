@@ -13,11 +13,12 @@
     Handlers and Behaviors:
     - loginUser()   
         Sends post request to /api/users/login with username, password
-        Returns true on success, false if API error then updates error state
+        Returns token on success, null if API error, then updates error state
     - onLoginSubmit(e: event)
         Handles form submission and input validation
         Calls loginUser()
         Sets error, awaitAPI state
+        Sets token to localStorage
         Routes user to /dashboard on API success 
     - handleClear()
         Clears all input fields, error state
@@ -45,7 +46,7 @@ export default function Login() {
     const [awaitAPI, setAwaitAPI] = useState(false);
 
     // Sends post request to /api/users/login
-    // Returns boolean for success/failure
+    // Returns token on success, null on fail
     async function loginUser() {
         try {
             const response = await fetch('/api/users/login', {
@@ -59,18 +60,19 @@ export default function Login() {
                     'Content-Type': 'application/json'
                 }
             });
-            const data = await response.json();
+            const { message, data} = await response.json();
+            console.log("test line 66 ..")
             console.log(data);
             if (!response.ok) {
                 setErrors(prev => (
                     {
                         ...prev,
-                        apiError: data.message
+                        apiError: message
                     }
                 ));
-                return false;
+                return null;
             }
-            return true;
+            return data.token;
         } catch (error) {
             console.log("api err");
             setErrors(prev => (
@@ -78,11 +80,11 @@ export default function Login() {
                     ...prev,
                     apiError: error.message
                 }));
-            return false;
+            return null;
         }
     }
 
-    // Handles form submission and input validation
+    // Handles form submission and input validation, sets token to local storage
     async function onLoginSubmit(e) {
         let validForm = true;
         e.preventDefault();
@@ -105,12 +107,16 @@ export default function Login() {
         setAwaitAPI(true);
         // Wait 2 seconds
         await new Promise(resolve => setTimeout(resolve, 2000));
-        const successAPI = await loginUser();
+        const token = await loginUser();
+        console.log(token);
         setAwaitAPI(false);
-        if (!successAPI) {
+        if (!token) {
             return;
         }
-        // route to dashboard
+        // Store token to local session
+        localStorage.setItem('jwt', token);
+        // console.log(localStorage.getItem('jwt'));
+        // Route to dashboard
         router.push("/dashboard");
     }
 
