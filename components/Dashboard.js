@@ -1,12 +1,15 @@
 // Dashboard.js
 "use client";
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useCat } from "@/context/CatContext";
 import { useRouter } from "next/navigation";
+import { jwtDecode } from "jwt-decode";
 
 // TODO: Functions that update cat state
 // Add log out confirmation
-// Fetch cat state from db
+// Fetch cat state from db -- 
+// Fetch username from jwt
+
 
 // Feed
 // Sleep.. etc
@@ -16,6 +19,60 @@ export default function Dashboard() {
     const [chat, setChat] = useState("");
     const { cat, setCat } = useCat();
     const [awaitAPI, setAwaitAPI] = useState(false);
+    const [username, setUsername] = useState("");
+
+    const [test, setTest] = useState(null);
+
+    useEffect(() => {
+        const token = localStorage.getItem("jwt");
+        if (!token) {
+            // maybe return to login?
+            return;
+        }
+        try {
+            const { id, username } = jwtDecode(token);
+            console.log(username);
+            setUsername(username);
+            // fetchCat here?
+            fetchCat(id);
+            printData();
+
+        } catch (error) {
+            // invalid token, maybe return to login?
+        }
+    }, []);
+
+    useEffect(() => {
+        if (test) {
+            console.log("Updated cat data:", test[0]);
+            setCat(prev => ({
+                ...prev,
+                ...test[0]
+            }));
+        }
+    }, [test]);
+
+    useEffect(() => {
+        console.log(cat);
+    }, [cat])
+
+    async function fetchCat(userID) {
+        try {
+            const response = await fetch(`/api/cats/my-cat?userID=${userID}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('jwt')}`
+                }
+            })
+            const data = await response.json();
+            console.log(data.data);
+            setTest(data.data)
+            console.log(52);
+        } catch (error) {
+
+        }
+    }
 
     async function handleSend() {
         console.log(chat);
@@ -30,7 +87,7 @@ export default function Dashboard() {
         setAwaitAPI(true);
         await new Promise(resolve => setTimeout(resolve, 2000));
         setAwaitAPI(false);
-        router.push("/login")
+        router.push("/")
     }
 
     return (
@@ -38,6 +95,9 @@ export default function Dashboard() {
             dashboard
             <br />
             <br />
+            <p>{username} || <button onClick={handleLogOut} disabled={awaitAPI}>
+                {!awaitAPI ? "log out" : "logging out..."}
+            </button></p>
             <p>[ {cat.name} ] || [exp: {cat.exp}] [$ {cat.money}]</p>
             <p>[hunger: {cat.hunger} || affection: {cat.affection} || energy: {cat.energy} ]</p>
             <h1> =========</h1>
@@ -59,9 +119,6 @@ export default function Dashboard() {
             <button>button3</button>
             <br />
             <br />
-            <button onClick={handleLogOut} disabled={awaitAPI}>
-                {!awaitAPI ? "log out" : "logging out..."}
-            </button>
         </div>
     )
 }
