@@ -3,8 +3,7 @@
     =====
     Creates a cat for first time uers
     
-    Database table reference:
-    Cats
+    Cats database table for reference:
     ---------------------------------------------------------------------------
     id  | userid | name | hunger | money | affection | energy | exp | bday
     ---------------------------------------------------------------------------
@@ -49,7 +48,16 @@ export async function POST(req) {
 
         // Extract id from payload
         const { id } = user;
-        const body = await req.json();
+        let body;
+
+        try {
+            body = await req.json();
+        } catch (error) {
+            return apiError(
+                "Missing or invalid JSON body",
+                400
+            )
+        }
         const { catName } = body;
         // if (!id) {
         //     return apiError(
@@ -75,7 +83,7 @@ export async function POST(req) {
         );
     } catch (error) {
         return apiError(
-            "Failed to process POST request",
+            "Failed to process POST request: " + error.message,
             500
         )
     }
