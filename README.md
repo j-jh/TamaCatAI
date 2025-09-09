@@ -13,7 +13,7 @@ Environment:
 
 wip...
 
-##RoadMap
+RoadMap
 =====
 ### Completed
 - Static front end
@@ -24,11 +24,15 @@ wip...
 - Check password against hashed password upon login
 - Create JWT upon sign in
 - Verify JWT prior to cat API calls
+- Save JWT for the local session
 
 ### In progress
 - Update existing API comments and error codes
-- Fetch backend API through front end
-- Save JWT for the local session
+- Fetch backend API through front end for
+  - Registration (done)
+  - Login (done)
+  - Onboarding (done)
+  - Dashboard (in progress)
 
 ### Near goals
 - Create basic interactions to update cat state stats
