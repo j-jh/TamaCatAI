@@ -82,6 +82,7 @@ export async function POST(req) {
         const uniqueUser = await pool.query(`SELECT * FROM users WHERE username = $1`, [username]);
         // console.log(uniqueUser);
         if (uniqueUser.rows.length !== 0) {
+            console.log("not unique test test")
             return apiError(
                 `Username ${username} already taken`,
                 400
