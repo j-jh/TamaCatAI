@@ -22,6 +22,7 @@ export default function Dashboard() {
     const [username, setUsername] = useState("");
 
     const [test, setTest] = useState(null);
+    const [idFromJWT, setId] = useState();
 
     useEffect(() => {
         const token = localStorage.getItem("jwt");
@@ -33,6 +34,7 @@ export default function Dashboard() {
             const { id, username } = jwtDecode(token);
             console.log(username);
             setUsername(username);
+            setId(id)
             // fetchCat here?
             fetchCat(id);
             printData();
@@ -55,7 +57,41 @@ export default function Dashboard() {
     useEffect(() => {
         console.log(cat);
     }, [cat])
+    // Update later to not need to pass userID
+    async function updateCat(changesObject) {
+        try {
+            const response = await fetch(`/api/cats/my-cat?userid=${idFromJWT}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('jwt')}`
+                },
+                body: JSON.stringify(changesObject)
+            })
+            const data = await response.json();
+            console.log(data);
 
+        } catch (error) {
+
+        }
+    }
+    function testFeed() {
+        setCat(prev => {
+            const newHunger = cat.hunger + 50;
+            updateCat({hunger: newHunger});
+            return { ...prev, hunger: newHunger}
+        })
+    }
+
+    function testStarve() {
+        setCat(prev => {
+            const newHunger = 0;
+            updateCat({hunger: newHunger});
+            return { ...prev, hunger: newHunger}
+        })
+    }
+
+    // Update to get userID from jwt
     async function fetchCat(userID) {
         try {
             const response = await fetch(`/api/cats/my-cat?userID=${userID}`, {
@@ -114,8 +150,8 @@ export default function Dashboard() {
             </button>
             <br />
             <br />
-            <button>button1</button>
-            <button>button2</button>
+            <button onClick={testFeed}>test feed</button>
+            <button onClick={testStarve}>test starve</button>
             <button>button3</button>
             <br />
             <br />
