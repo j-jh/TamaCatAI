@@ -78,16 +78,16 @@ export default function Dashboard() {
     function testFeed() {
         setCat(prev => {
             const newHunger = cat.hunger + 50;
-            updateCat({hunger: newHunger});
-            return { ...prev, hunger: newHunger}
+            updateCat({ hunger: newHunger });
+            return { ...prev, hunger: newHunger }
         })
     }
 
     function testStarve() {
         setCat(prev => {
             const newHunger = 0;
-            updateCat({hunger: newHunger});
-            return { ...prev, hunger: newHunger}
+            updateCat({ hunger: newHunger });
+            return { ...prev, hunger: newHunger }
         })
     }
 
@@ -126,16 +126,19 @@ export default function Dashboard() {
         router.push("/")
     }
 
-    const [showRename, setShowRename] = useState(false); 
+    const [showRename, setShowRename] = useState(false);
     const [newName, setNewName] = useState("");
 
-    function testRename() {
-        setCat( prev => {
+    async function testRename() {
+        setCat(prev => {
             const updateName = newName;
-            updateCat({name: updateName});
-            return {... prev, name: updateName}
+            updateCat({ name: updateName });
+            return { ...prev, name: updateName }
         })
+        setAwaitAPI(true);
+        await new Promise(resolve => setTimeout(resolve, 1000));
         setShowRename(false);
+        setAwaitAPI(false);
     }
 
     return (
@@ -144,11 +147,11 @@ export default function Dashboard() {
             <br />
             <br />
             {showRename && <input onChange={e => setNewName(e.target.value)}></input>}
-            <button onClick={() => setShowRename(!showRename)}>
+            <button onClick={() => setShowRename(!showRename)} disabled={awaitAPI}>
                 {!showRename ? <>Rename cat</> : <>Exit</>}
             </button>
-            <br/>
-            {showRename && <button onClick={testRename}>Rename</button>}
+            <br />
+            {showRename && <button onClick={testRename} disabled={awaitAPI || newName.length < 4}>Rename</button>}
 
             <p>{username} || <button onClick={handleLogOut} disabled={awaitAPI}>
                 {!awaitAPI ? "log out" : "logging out..."}
