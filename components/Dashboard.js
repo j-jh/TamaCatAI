@@ -126,11 +126,30 @@ export default function Dashboard() {
         router.push("/")
     }
 
+    const [showRename, setShowRename] = useState(false); 
+    const [newName, setNewName] = useState("");
+
+    function testRename() {
+        setCat( prev => {
+            const updateName = newName;
+            updateCat({name: updateName});
+            return {... prev, name: updateName}
+        })
+        setShowRename(false);
+    }
+
     return (
         <div>
             dashboard
             <br />
             <br />
+            {showRename && <input onChange={e => setNewName(e.target.value)}></input>}
+            <button onClick={() => setShowRename(!showRename)}>
+                {!showRename ? <>Rename cat</> : <>Exit</>}
+            </button>
+            <br/>
+            {showRename && <button onClick={testRename}>Rename</button>}
+
             <p>{username} || <button onClick={handleLogOut} disabled={awaitAPI}>
                 {!awaitAPI ? "log out" : "logging out..."}
             </button></p>
