@@ -16,6 +16,7 @@
 */
 import pool from '@/services/database';
 import { apiError, apiSuccess } from '@/services/errorResponses';
+import { verifyUser } from '@/services/authentication';
 
 /*
     GET
@@ -93,6 +94,65 @@ export async function DELETE(req) {
     } catch (error) {
         return apiError(
             "Failed to process DELETE request: " + error.message,
+            500
+        )
+    }
+}
+
+/*
+    PATCH
+
+    Rename user account
+
+    {
+        "newName": "string (max len __ )"
+    }
+*/
+
+export async function PATCH(req) {
+    try {
+        console.log("changing username...")
+        // let authUser;
+        // try {
+        //     authUser = verifyUser(req);
+        // } catch (error) {
+        //     return apiError(
+        //         error.message,
+        //         401
+        //     );
+        // }
+        const { searchParams } = new URL(req.url);
+        const userID = searchParams.get("id");
+
+        if (!userID) {
+            return apiError(
+                "Missing parameter: ID",
+                400
+            )
+        }
+        const body = await req.json();
+        console.log(body);
+
+        if (!body) {
+            return apiError(
+                "Missing parameter: JSON",
+                400
+            )
+        }
+        const {newName} = body;
+        // Code to update username in db
+        const sqlQuery = await pool.query(`UPDATE users SET username = $1 WHERE id = $2 RETURNING *`, [newName, userID])
+        // UPDATE users SET username = $1 WHERE id = $2 RETURNING *;
+
+        return apiSuccess(
+            "Successfully updated username",
+            sqlQuery.rows[0],
+            200
+        );
+
+    } catch (error) {
+        return apiError(
+            "Failed to process PATCH request: "+ error.message,
             500
         )
     }
