@@ -128,6 +128,7 @@ export default function Dashboard() {
 
     const [showRename, setShowRename] = useState(false);
     const [newName, setNewName] = useState("");
+    const [showMenu, setShowMenu] = useState(false);
 
     async function testRename() {
         setCat(prev => {
@@ -146,16 +147,29 @@ export default function Dashboard() {
             dashboard
             <br />
             <br />
-            {showRename && <input onChange={e => setNewName(e.target.value)}></input>}
-            <button onClick={() => setShowRename(!showRename)} disabled={awaitAPI}>
-                {!showRename ? <>Rename cat</> : <>Exit</>}
-            </button>
-            <br />
-            {showRename && <button onClick={testRename} disabled={awaitAPI || newName.length < 4}>Rename</button>}
 
-            <p>{username} || <button onClick={handleLogOut} disabled={awaitAPI}>
-                {!awaitAPI ? "log out" : "logging out..."}
-            </button></p>
+
+            <div>[ {username} ] ||
+                {!showMenu ?
+                    <button onClick={() => setShowMenu(true)}>settings</button> :
+                    <button onClick={() => {
+                        setShowMenu(false);
+                        setShowRename(false);
+                    }}> return</button>
+                }
+                {showMenu && <div>
+                    {showRename && <input onChange={e => setNewName(e.target.value)}></input>}
+                    <button onClick={() => setShowRename(!showRename)} disabled={awaitAPI}>
+                        {!showRename ? <>rename cat</> : <>cancel</>}
+                    </button>
+                    {showRename && <button onClick={testRename} disabled={awaitAPI || newName.length < 4}>Rename</button>}
+                    <br />
+                    <button onClick={handleLogOut} disabled={awaitAPI}>
+                        {!awaitAPI ? "log out" : "logging out..."}
+                    </button>
+                    <br />
+                </div>}
+            </div>
             <p>[ {cat.name} ] || [exp: {cat.exp}] [$ {cat.money}]</p>
             <p>[hunger: {cat.hunger} || affection: {cat.affection} || energy: {cat.energy} ]</p>
             <h1> =========</h1>
