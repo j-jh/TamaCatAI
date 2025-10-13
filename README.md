@@ -65,3 +65,7 @@ RoadMap
   - Set expiration
   - Layer of security for user-specific API access
 - Using JWT verification as a security checkpoint
+- Prevent stale state. Do NOT call async function inside synchronous function.
+    1. CALCULATE VALUES
+    2. UPDATE STATE
+    3. ASYNC LAST  
