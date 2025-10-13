@@ -14,6 +14,18 @@ import { jwtDecode } from "jwt-decode";
 // Feed
 // Sleep.. etc
 
+/*
+    Cat structure for reference:
+    cat = {
+        name: "",
+        hunger: 0,
+        money: 0,
+        affection: 0,
+        energy: 0,
+        exp: 0
+    }
+*/
+
 export default function Dashboard() {
     const router = useRouter();
     const [chat, setChat] = useState("");
@@ -75,21 +87,6 @@ export default function Dashboard() {
 
         }
     }
-    function testFeed() {
-        setCat(prev => {
-            const newHunger = cat.hunger + 50;
-            updateCat({ hunger: newHunger });
-            return { ...prev, hunger: newHunger }
-        })
-    }
-
-    function testStarve() {
-        setCat(prev => {
-            const newHunger = 0;
-            updateCat({ hunger: newHunger });
-            return { ...prev, hunger: newHunger }
-        })
-    }
 
     // Update to get userID from jwt
     async function fetchCat(userID) {
@@ -131,15 +128,42 @@ export default function Dashboard() {
     const [showMenu, setShowMenu] = useState(false);
 
     async function testRename() {
-        setCat(prev => {
-            const updateName = newName;
-            updateCat({ name: updateName });
-            return { ...prev, name: updateName }
-        })
+        // Fix pattern similar to below
+
+        // setCat(prev => {
+        //     const updateName = newName;
+        //     updateCat({ name: updateName });
+        //     return { ...prev, name: updateName }
+        // })
         setAwaitAPI(true);
         await new Promise(resolve => setTimeout(resolve, 1000));
         setShowRename(false);
         setAwaitAPI(false);
+    }
+
+    // DOCUMENT LATER
+    // Generalized to update indivdiual stats
+    // param: cat obj property, int val
+    // State then server
+    async function updateCatStat(trait, value) {
+        // [] for param str to obj prop
+        const currVal = cat[trait];   // from useCat
+        const newVal = value === 0 ? 0 : currVal + value;
+        setCat(prev => {
+            // can reset prop
+            const newStat = { ...prev, [trait]: newVal };
+            console.log(newStat);
+            return newStat;
+        });
+        try {
+            await updateCat({ [trait]: newVal })
+        } catch (error) {
+            console.log(error.message);
+            // Revert state
+            setCat(prev => {
+                return { ...prev, [trait]: currVal }
+            })
+        }
     }
 
     return (
@@ -186,8 +210,8 @@ export default function Dashboard() {
             </button>
             <br />
             <br />
-            <button onClick={testFeed}>test feed</button>
-            <button onClick={testStarve}>test starve</button>
+            <button onClick={() => updateCatStat("hunger", 1000)}>test feed</button>
+            <button onClick={() => updateCatStat("hunger", 0)}>test starve</button>
             <button>button3</button>
             <br />
             <br />
