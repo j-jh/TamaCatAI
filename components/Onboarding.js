@@ -118,6 +118,12 @@ export default function Onboarding() {
         setAwaitAPI(false);
         if (!newCatSuccess) {
             // Set error
+            setErrors(prev => (
+                {
+                    ...prev,
+                    apiError: "Failed to create cat"
+                }));
+            console.log("Fail 126");
             return;
         }
         // Route to dashboard
