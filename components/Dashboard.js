@@ -169,6 +169,8 @@ export default function Dashboard() {
     async function testRename() {
         setAwaitAPI(true);
         await new Promise(resolve => setTimeout(resolve, 1000));
+        // pass name as new.. 
+        updateCatStat("name", newName);
         setShowRename(false);
         setAwaitAPI(false);
     }
@@ -180,7 +182,12 @@ export default function Dashboard() {
     async function updateCatStat(trait, value) {
         // [] for param str to obj prop
         const currVal = cat[trait];   // from useCat
-        const newVal = value === 0 ? 0 : currVal + value;
+        let newVal;
+        if (trait == "name") {
+            newVal = value;
+        } else {
+            newVal = value === 0 ? 0 : currVal + value;
+        }
         setCat(prev => {
             // can reset prop
             const newStat = { ...prev, [trait]: newVal };
@@ -254,13 +261,29 @@ export default function Dashboard() {
                 <tbody>
                     <tr>
                         <td>
-                            <button onClick={() => updateCatStat("hunger", 10)}>feed</button>
+                            {/* feed */}
+                            <button onClick={() =>
+                                updateCatStat("hunger", 10)}>
+                                feed</button>
                         </td>
                         <td>
-                            <button onClick={() => updateCatStat("hunger", 0)}>play</button>
+                            {/* play */}
+                            <button onClick={() => {
+                                updateCatStat("hunger", -10);
+                                updateCatStat("affection", 10);
+                                updateCatStat("energy", -10);
+                            }}>
+                                play
+                            </button>
                         </td>
                         <td>
-                            <button>rest</button>
+                            {/* rest */}
+                            <button onClick={() => {
+                                updateCatStat("hunger", -10);
+                                updateCatStat("energy", 10);
+                            }}>
+                                rest
+                            </button>
                         </td>
                     </tr>
 
