@@ -26,6 +26,7 @@ import { jwtDecode } from "jwt-decode";
     }
 */
 
+
 export default function Dashboard() {
     const router = useRouter();
     const [chat, setChat] = useState("");
@@ -36,10 +37,48 @@ export default function Dashboard() {
     const [test, setTest] = useState(null);
     const [idFromJWT, setId] = useState();
 
+    const catFrames = [
+        `
+          ^   >
+         (o  o)
+         >    >
+          v  -
+        `,
+        `
+         ^  ^
+        (o  o)
+        v    v
+         v  v
+        `,
+        `
+         ^  ^
+        (-  -)
+        v    v
+         v  v
+        `,
+        `
+        <   ^
+        (o  o)
+        <    <
+         -  v
+        `,
+    ];
+    const [frameIndex, setFrameIndex] = useState(0);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setFrameIndex((prev) => (prev + 1) % catFrames.length);
+        }, 400);
+
+        return () => clearInterval(interval);
+    }, []);
+
+
     useEffect(() => {
         const token = localStorage.getItem("jwt");
         if (!token) {
-            // maybe return to login?
+            // Return to login
+            router.push("/login");
             return;
         }
         try {
@@ -128,13 +167,6 @@ export default function Dashboard() {
     const [showMenu, setShowMenu] = useState(false);
 
     async function testRename() {
-        // Fix pattern similar to below
-
-        // setCat(prev => {
-        //     const updateName = newName;
-        //     updateCat({ name: updateName });
-        //     return { ...prev, name: updateName }
-        // })
         setAwaitAPI(true);
         await new Promise(resolve => setTimeout(resolve, 1000));
         setShowRename(false);
@@ -168,12 +200,12 @@ export default function Dashboard() {
 
     return (
         <div>
-            dashboard
+            home
             <br />
             <br />
 
 
-            <div>[ {username} ] ||
+            <div> 🤖{username}  |
                 {!showMenu ?
                     <button onClick={() => setShowMenu(true)}>settings</button> :
                     <button onClick={() => {
@@ -181,8 +213,9 @@ export default function Dashboard() {
                         setShowRename(false);
                     }}> return</button>
                 }
-                {showMenu && <div>
+                {showMenu && <>
                     {showRename && <input onChange={e => setNewName(e.target.value)}></input>}
+                    <br></br>
                     <button onClick={() => setShowRename(!showRename)} disabled={awaitAPI}>
                         {!showRename ? <>rename cat</> : <>cancel</>}
                     </button>
@@ -192,16 +225,53 @@ export default function Dashboard() {
                         {!awaitAPI ? "log out" : "logging out..."}
                     </button>
                     <br />
-                </div>}
+                </>}
             </div>
-            <p>[ {cat.name} ] || [exp: {cat.exp}] [$ {cat.money}]</p>
-            <p>[hunger: {cat.hunger} || affection: {cat.affection} || energy: {cat.energy} ]</p>
-            <h1> =========</h1>
-            <h1>||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;||</h1>
-            <h1>||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;||</h1>
-            <h1>||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;||</h1>
-            <h1>||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;||</h1>
-            <h1> =========</h1>
+            <table style={{ tableLayout: "fixed", width: "15%" }}>
+                <colgroup>
+                    <col style={{ width: "15%" }} />
+                    <col style={{ width: "15%" }} />
+                    <col style={{ width: "15%" }} />
+                </colgroup>
+                <thead>
+                    <tr>
+                    </tr>
+                </thead>
+                <thead>
+                    <tr>
+                        <td>📛{cat.name}</td>
+                        <td> ⭐ {cat.exp}</td>
+                        <td> 💰{cat.money}</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>🍖 {cat.hunger}</td>
+                        <td>❤️ {cat.affection}</td>
+                        <td>⚡ {cat.energy}</td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr>
+                        <td>
+                            <button onClick={() => updateCatStat("hunger", 10)}>feed</button>
+                        </td>
+                        <td>
+                            <button onClick={() => updateCatStat("hunger", 0)}>play</button>
+                        </td>
+                        <td>
+                            <button>rest</button>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+            <br></br>
+            <pre>
+                {catFrames[frameIndex]}
+            </pre>
+            <br></br>
             <textarea placeholder="chat with cat"
                 onChange={(e) => setChat(e.target.value)}
                 value={chat}></textarea>
@@ -209,12 +279,7 @@ export default function Dashboard() {
                 {awaitAPI ? "sending..." : "send"}
             </button>
             <br />
-            <br />
-            <button onClick={() => updateCatStat("hunger", 1000)}>test feed</button>
-            <button onClick={() => updateCatStat("hunger", 0)}>test starve</button>
-            <button>button3</button>
-            <br />
-            <br />
+
         </div>
     )
 }
