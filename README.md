@@ -13,6 +13,8 @@ Environment:
 
 wip...
 
+Run refresh token, any time backend route is pinged that needs auth, if user token expires, refresh token
+
 RoadMap
 =====
 ### Completed
@@ -25,19 +27,24 @@ RoadMap
 - Create JWT upon sign in
 - Verify JWT prior to cat API calls
 - Save JWT for the local session
-
-### In progress
-- Update existing API comments and error codes
 - Fetch backend API through front end for
   - Registration (done)
   - Login (done)
   - Onboarding (done)
-  - Dashboard (in progress)
+  - Dashboard (done)
+- Basic idle cat animation!
+- Basic ascii/retro styling
+
+### In progress
+- Update existing API comments and error codes
+- Create interactions to update cat state beyond button press
+
 
 ### Near goals
-- Create basic interactions to update cat state stats
-- Cat UI
 - Add OpenAI API calls
+- Additional animations for different types of interactions
+  - Play
+  - Feed.. etc
 
 ### Future
 - pgvector integration
@@ -69,3 +76,5 @@ RoadMap
     1. CALCULATE VALUES
     2. UPDATE STATE
     3. ASYNC LAST  
+- <pre> tag accounts for literal white space... 
+- Animating with ascii symbols is not fun
