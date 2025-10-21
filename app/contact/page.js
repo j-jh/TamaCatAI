@@ -6,7 +6,10 @@ export default function Contact() {
     return (
         <div>
             <h2>contact</h2>
-            <p>stuff</p>
+            <p>person who brought me to life:</p>
+            <p>https://github.com/j-jh</p>
+            <p>https://www.linkedin.com/in/jadon-huang/</p>
+            <br></br>
             <Link href="/"><button>return...</button></Link>
         </div>
     )
