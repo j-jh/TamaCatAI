@@ -60,7 +60,7 @@ export default function Login() {
                     'Content-Type': 'application/json'
                 }
             });
-            const { message, data} = await response.json();
+            const { message, data } = await response.json();
             console.log("test line 66 ..")
             console.log(data);
             if (!response.ok) {
@@ -138,24 +138,38 @@ export default function Login() {
     return (
         <div>
             <h1>login</h1>
-            <form onSubmit={(e) => onLoginSubmit(e)}>
-                <input type="text" placeholder="username" aria-label="Username" value={user}
-                    onChange={(e) => setUser(e.target.value)} />
+            <form
+                onSubmit={onLoginSubmit}
+                style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center", // center inputs/buttons horizontally
+                    gap: "0.5rem",        // vertical spacing between inputs/buttons
+                }}
+            >
+                <div style={{ display: "flex" }}>
+                    <input type="text" placeholder="username" aria-label="Username" value={user}
+                        onChange={(e) => setUser(e.target.value)} />
+                    <button type="button" disabled={!enableClear} onClick={handleClear}>clear</button>
+
+                </div>
+
                 <br />
                 {errors.userLength && <p style={{ color: 'red' }}>{errors.userLength}</p>}
+                <div style={{ display: "flex" }}>
 
-                <input type={showPass ? "text" : "password"} placeholder="password" value={pass}
-                    onChange={(e) => setPass(e.target.value)} />
-                <button type="button" disabled={!enableShowHide}
-                    onClick={() => setShowPass(!showPass)}>{!showPass ? 'show' : 'hide'}</button>
-                <br />
+                    <input type={showPass ? "text" : "password"} placeholder="password" value={pass}
+                        onChange={(e) => setPass(e.target.value)} />
+                    <button type="button" disabled={!enableShowHide}
+                        onClick={() => setShowPass(!showPass)}>{!showPass ? 'show' : 'hide'}</button>
+                    <br />
+                </div>
                 {errors.passLength && <p style={{ color: 'red' }}>{errors.passLength}</p>}
                 {errors.apiError && <p style={{ color: 'red' }}>{errors.apiError}</p>}
 
                 <button type="submit" disabled={awaitAPI}>
-                    {awaitAPI? "waking up cat..." :  "take me to my cat!"}
+                    {awaitAPI ? "waking up cat..." : "take me to my cat!"}
                 </button>
-                <button type="button" disabled={!enableClear} onClick={handleClear}>clear</button>
             </form>
             <Link href="/"><button type="button">return...</button></Link>
         </div>
