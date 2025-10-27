@@ -6,6 +6,7 @@ Environment:
 - Node.js 20.x
 - Next.js 15.x
 - PostgreSQL 17.x
+- OpenAI API 6.7.x
 - npm or yarn
 
 wip...
