@@ -26,25 +26,25 @@ import { jwtDecode } from "jwt-decode";
     }
 */
 const catFrames = [
-`
+    `
 ^  >
 (o o)
  >  >
 v  -
 `,
-`
+    `
 ^  ^
 (o o)
 >  <
 v  v
 `,
-`
+    `
 ^  ^
 (- -)
 >  <
 v  v
 `,
-`
+    `
 <  ^
 (o o)
 <  <
@@ -150,6 +150,7 @@ export default function Dashboard() {
         setAwaitAPI(true);
         // Wait 
         await new Promise(resolve => setTimeout(resolve, 1000));
+        sendMessage()
         setChat("");
         setAwaitAPI(false);
     }
@@ -205,6 +206,44 @@ export default function Dashboard() {
             })
         }
     }
+    const [catResponse, setCatResponse] = useState("");
+
+    async function sendMessage() {
+        if (!chat) return;
+        setCatResponse("meow...")
+        setAwaitAPI(true);
+        try {
+            const token = localStorage.getItem("jwt");
+            if (!token || !idFromJWT) throw new Error("Missing JWT or user ID");
+
+            const response = await fetch(`/api/cats/cat-chat?userid=${idFromJWT}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+                body: JSON.stringify({ message: chat })
+            });
+
+
+            if (!response.ok) {
+                console.log(error);
+            }
+
+            const aiReply = await response.json();
+            setChat("");
+            console.log("AI reply:", aiReply);
+            console.log(235)
+            console.log(aiReply.data);
+            setCatResponse(aiReply.data);
+
+        } catch (error) {
+            console.log(error.message);
+        } finally {
+            setAwaitAPI(false);
+        }
+    }
+
 
     return (
         <div
@@ -332,7 +371,7 @@ export default function Dashboard() {
                 {/* Cat */}
                 <pre
                     style={{
-                        width: "20ch", // same width as table
+                        width: "22ch", // same width as table
                         textAlign: "center",
                         lineHeight: "1.1",
                         fontSize: "0.9rem",
@@ -344,6 +383,22 @@ export default function Dashboard() {
                     {catFrames[frameIndex]}
                 </pre>
             </div>
+            <div
+                style={{
+                    width: "25ch",            // match cat width
+                    border: "1px solid gray", // box border
+                    borderRadius: "6px",      // rounded corners
+                    padding: "0.3rem 0.5rem", // inner padding
+                    marginTop: "0.5rem",      // spacing from cat
+                    fontFamily: "monospace",  // ASCII art style
+                    whiteSpace: "pre-wrap",   // preserve line breaks
+                    textAlign: "left",        // left-align text
+                    fontSize: "0.8rem"
+                }}
+            >
+                {`💬 ${catResponse}`}
+            </div>
+
             {/* Chat */}
             <div style={{ marginTop: "0.5rem" }}>
                 <textarea
