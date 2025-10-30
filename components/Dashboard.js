@@ -159,6 +159,7 @@ export default function Dashboard() {
         setAwaitAPI(true);
         await new Promise(resolve => setTimeout(resolve, 2000));
         setAwaitAPI(false);
+        localStorage.removeItem("jwt");
         router.push("/")
     }
 
