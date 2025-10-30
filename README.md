@@ -32,14 +32,14 @@ RoadMap
   - Dashboard (done)
 - Basic idle cat animation!
 - Basic ascii/retro styling
+- Integrate OpenAI API call for chat functionality
 
 ### In progress
 - Update existing API comments and error codes
 - Create interactions to update cat state beyond button press
-
+- Dynamic personality, perhaps pass current state stats to chat prompt
 
 ### Near goals
-- Add OpenAI API calls
 - Additional animations for different types of interactions
   - Play
   - Feed.. etc
