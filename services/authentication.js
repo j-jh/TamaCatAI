@@ -41,6 +41,24 @@ export function createToken(payload) {
     );
 }
 /*
+    createDemoToken
+
+    JSON web token created for 15 minute long demo session
+
+*/
+export function createDemoToken() {
+    return jwt.sign(
+        {
+            id: -1, // On API calls, return demo cat if ID -1
+            username: "guest"
+        },
+        JWT_SECRET,
+        {
+            expiresIn: '15m'
+        }
+    )
+}
+/*
     checkToken
     
     Verifies a JSON Web Token and returns its decoded form
