@@ -36,6 +36,7 @@ RoadMap
 
 ### In progress
 - Update existing API comments and error codes
+- Credential free demo
 - Create interactions to update cat state beyond button press
 - Dynamic personality, perhaps pass current state stats to chat prompt
 

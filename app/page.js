@@ -18,11 +18,10 @@ export default function Home() {
     >
       <h1>welcome to</h1>
       <h1>tamacatai! </h1>
-      <Link href="/login"><button type="button">login</button></Link>
-      <Link href="/register"><button type="button">sign up</button></Link>
-
+      <Link href="/login">login</Link>
+      <Link href="/register">sign up</Link>
+      <Link href="">demo</Link>
       <Link href="/about">about</Link>
-
       <Link href="/contact">contact</Link>
     </div>
   );
